@@ -1,7 +1,7 @@
 {
   "name": "BYOB",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,5 +22,10 @@
     "pg": "^6.2.2",
     "xml2json": "^0.11.0"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.2.0"
+  }
 }
