@@ -1,25 +1,25 @@
+const data = require('../../../data_cleaner.js');
+console.log(data);
 
 exports.seed = function(knex, Promise) {
   return knex('parks').del()
     .then(() => knex('locations').del())
     .then(() => {
       return Promise.all([
-        data.forEach(location => {
+        data.forEach(place => {
           knex('locations').insert({
-            city: location.city
+            city: place.city
           }, 'id')
-          .then(location => {
-            data.forEach(location => {
-              return knex('parks').insert([
-                { place_id: location[0],
-                  name: location.activities[0].name,
-                  activity_type: location.activities[0].activity_type_name,
-                  activity_description: location.activities[0].description,
-                }
-              ])
-            })
+          .then(place => {
+            return knex('parks').insert(
+              { city_id: location[0],
+                name: place.activities[0].name,
+                activity_type: place.activities[0].activity_type_name,
+                activity_description: place.activities[0].description,
+              }
+            )
           })
         })
       ])
     });
-};
+}
