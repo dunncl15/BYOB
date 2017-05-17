@@ -1,9 +1,10 @@
 {
   "name": "BYOB",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -17,10 +18,16 @@
   },
   "homepage": "https://github.com/dunncl15/BYOB#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
     "knex": "^0.13.0",
     "nodemon": "^1.11.0",
-    "pg": "^6.2.2",
-    "xml2json": "^0.11.0"
+    "pg": "^6.2.2"
   },
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.2.0"
+  }
 }
