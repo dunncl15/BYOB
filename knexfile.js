@@ -14,6 +14,18 @@ module.exports = {
     },
   },
 
+  test: {
+    client: 'pg',
+    connection: process.env.DATABASE_URL || 'postgres://localhost/co_recreation_test',
+    useNullAsDefault: true,
+    migrations: {
+      directory: './db/migrations',
+    },
+    seeds: {
+      directory: './db/test/seeds',
+    },
+  },
+
   staging: {
     client: 'postgresql',
     connection: {
