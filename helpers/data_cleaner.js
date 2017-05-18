@@ -1,4 +1,4 @@
-const rawData = require('./recreation.json');
+const rawData = require('../recreation.json');
 
 const places = [];
 
