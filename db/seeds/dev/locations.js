@@ -1,4 +1,4 @@
-const data = require('../../../data_cleaner.js');
+const data = require('../../../helpers/data_cleaner.js');
 
 exports.seed = function(knex, Promise) {
   var localePromises = []
