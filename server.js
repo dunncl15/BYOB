@@ -109,18 +109,55 @@ app.get('/api/v1/locations/:id/parks', (request, response) => {
 
 app.post('/api/v1/locations', checkAuth, (request, response) => {
   const location = request.body;
-  database('locations').insert(location, 'id')
-  .then(location => {
-    response.status(201).json({ id: location[0] })
-  })
-  .catch(error => response.status(500).send({ error: error }));
+
+  if (location.hasOwnProperty('city')) {
+    database('locations').insert(location, 'id')
+    .then(location => {
+      response.status(201).json({ id: location[0] })
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  } else {
+    response.status(422).send({ error: 'Unprocessable entity. City is a required field.' })
+  }
 })
 
 app.post('/api/v1/parks', checkAuth, (request, response) => {
   const park = request.body;
-  database('parks').insert(park, 'id')
+  const parkProps = ['name', 'activity_type', 'activity_description', 'city_id'].every(prop => park.hasOwnProperty(prop));
+
+  if (parkProps) {
+    database('parks').insert(park, 'id')
+    .then(park => {
+      response.status(201).json({ id: park[0] })
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  } else {
+    response.status(422).send({ error: 'Unprocessable entity. Please include the following data: name, activity_type, activity_description, city_id' })
+  }
+})
+
+app.delete('/api/v1/locations/:id', checkAuth, (request, response) => {
+  const { id } = request.params;
+  database('locations').where('id', id).del()
+  .then(location => {
+    if (!location.length) {
+      response.status(404).send({ error: 'Park not found.' })
+    } else {
+      response.sendStatus(204)
+    }
+  })
+  .catch(error => response.status(500).send({ error: error }));
+})
+
+app.delete('/api/v1/parks/:id', checkAuth, (request, response) => {
+  const { id } = request.params;
+  database('parks').where('id', id).del()
   .then(park => {
-    response.status(201).json({ id: park[0] })
+    if (!park.length) {
+      response.status(404).send({ error: 'Park not found.' })
+    } else {
+      response.sendStatus(204)
+    }
   })
   .catch(error => response.status(500).send({ error: error }));
 })
