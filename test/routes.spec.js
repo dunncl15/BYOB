@@ -49,12 +49,12 @@ describe('', () => {
         });
       });
 
-      it.skip('should return a 404 for a non-existent route', (done) => {
+      it('should return a 404 for a non-existent route', (done) => {
         chai.request(server)
         .get('/api/v1/locationssss')
         .end((error, response) => {
           response.should.have.status(404)
-          respone.should.have.text('Route not found!')
+          response.text.should.equal('Route not found!')
           done();
         });
       });
@@ -151,7 +151,116 @@ describe('', () => {
           done();
         });
       });
+    });
+
+    describe('POST Routes', () => {
+
+      it('should add a new location', (done) => {
+        chai.request(server)
+        .post('/api/v1/locations')
+        .set('authorization', process.env.TOKEN)
+        .send({ city: 'Vail', id: 3 })
+        .end((error, response) => {
+          response.should.have.status(201)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.id.should.equal(3)
+          done();
+        });
+      });
+
+      it('should deny POST request w/o JWT', () => {
+        chai.request(server)
+        .post('/api/v1/locations')
+        .send({ city: 'Vail', id: 3 })
+        .end((error, response) => {
+          response.should.have.status(403)
+          reponse.should.be.json
+          response.body.should.be.a('object')
+          response.body.success.should.equal('false')
+          response.body.message.should.equal('You must be authorized to hit this endpoint')
+          done();
+        });
+      });
+
+      it('should deny POST if any data is missing', (done) => {
+        chai.request(server)
+        .post('/api/v1/locations')
+        .set('authorization', process.env.TOKEN)
+        .send({ id: 9 })
+        .end((error, response) => {
+          response.should.have.status(422)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.error.should.equal('Unprocessable entity. City is a required field.')
+          done();
+        });
+      });
+
+      it('should add a new park to a city', (done) => {
+        chai.request(server)
+        .post('/api/v1/parks')
+        .set('authorization', process.env.TOKEN)
+        .send(
+          { name: 'New Park',
+            id: 15,
+            city_id: 2,
+            activity_type: 'swimming',
+            activity_description: 'swim swim swim'
+          }
+        )
+        .end((error, response) => {
+          response.should.have.status(201)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.id.should.equal(15)
+          done();
+        });
+      });
+
+      it('should deny POST request w/o JWT', () => {
+        chai.request(server)
+        .post('/api/v1/parks')
+        .send(
+          { name: 'New Park',
+            id: 15,
+            city_id: 2,
+            activity_type: 'swimming',
+            activity_description: 'swim swim swim'
+          }
+        )
+        .end((error, response) => {
+          response.should.have.status(403)
+          reponse.should.be.json
+          response.body.should.be.a('object')
+          response.body.success.should.equal('false')
+          response.body.message.should.equal('You must be authorized to hit this endpoint')
+          done();
+        });
+      });
+
+      it('should deny POST if any data is missing', (done) => {
+        chai.request(server)
+        .post('/api/v1/parks')
+        .set('authorization', process.env.TOKEN)
+        .send(
+          { name: 'New Park',
+            id: 15,
+            activity_type: 'swimming',
+            activity_description: 'swim swim swim'
+          }
+        )
+        .end((error, response) => {
+          response.should.have.status(422)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.error.should.equal('Unprocessable entity. Please include the following data: name, activity_type, activity_description, city_id')
+          done();
+        });
+      });
 
     });
+
+
   });
 });

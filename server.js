@@ -13,7 +13,6 @@ const database = require('knex')(configuration);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
-// app.use(notFound)
 
 if (!config.CLIENT_SECRET || !config.USERNAME || !config.PASSWORD) {
   throw 'Make sure you have a CLIENT_SECRET, USERNAME, and PASSWORD in your .env file'
@@ -133,6 +132,8 @@ app.delete('/api/v1/parks/:id', checkAuth, (request, response) => {
   })
   .catch(error => response.status(500).send({ error: error }));
 })
+
+app.use(notFound)
 
 app.listen(app.get('port'), () => {
   console.log(`Server running on port ${app.get('port')}.`);
