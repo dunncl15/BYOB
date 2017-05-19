@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
-if (!config.CLIENT_SECRET || !config.USERNAME || !config.PASSWORD) {
+if (process.env.NODE_ENV === 'development' && !config.CLIENT_SECRET || !config.USERNAME || !config.PASSWORD) {
   throw 'Make sure you have a CLIENT_SECRET, USERNAME, and PASSWORD in your .env file'
 }
 
