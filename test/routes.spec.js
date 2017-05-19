@@ -42,7 +42,7 @@ describe('', () => {
           response.should.have.status(200)
           response.should.be.json
           response.body.should.be.a('array')
-          response.body.length.should.equal(2)
+          response.body.length.should.equal(3)
           response.body[0].should.have.property('city')
           response.body[0].should.have.property('id')
           done();
@@ -159,12 +159,12 @@ describe('', () => {
         chai.request(server)
         .post('/api/v1/locations')
         .set('authorization', process.env.TOKEN)
-        .send({ city: 'Vail', id: 3 })
+        .send({ city: 'Vail', id: 4 })
         .end((error, response) => {
           response.should.have.status(201)
           response.should.be.json
           response.body.should.be.a('object')
-          response.body.id.should.equal(3)
+          response.body.id.should.equal(4)
           done();
         });
       });
@@ -259,8 +259,44 @@ describe('', () => {
         });
       });
 
+      it('should delete a specific location by ID if there are no parks associated with the location', (done) => {
+        chai.request(server)
+        .get('/api/v1/locations')
+        .end((error, response) => {
+          response.body.length.should.equal(3)
+          chai.request(server)
+          .delete('/api/v1/locations/3')
+          .set('authorization', process.env.TOKEN)
+          .end((error, response) => {
+            chai.request(server)
+            .get('/api/v1/locations')
+            .end((error, response) => {
+              response.body.length.should.equal(2)
+              done();
+            });
+          });
+        });
+      });
+
+      it('should delete a specific park by ID', (done) => {
+        chai.request(server)
+        .get('/api/v1/parks')
+        .end((error, response) => {
+          response.body.length.should.equal(5)
+          chai.request(server)
+          .delete('/api/v1/parks/11')
+          .set('authorization', process.env.TOKEN)
+          .end((error, response) => {
+            chai.request(server)
+            .get('/api/v1/parks')
+            .end((error, response) => {
+              response.body.length.should.equal(4)
+              done();
+            });
+          });
+        });
+      });
+
     });
-
-
   });
 });
