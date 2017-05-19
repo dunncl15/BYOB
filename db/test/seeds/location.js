@@ -48,7 +48,11 @@ exports.seed = function(knex, Promise) {
               id: 14
             }
           ])
-        })
+        }),
+        knex('locations').insert({
+          city: 'Boulder',
+          id: 3
+        }, 'id')
       ]); // end Promise.all
     });
 };
