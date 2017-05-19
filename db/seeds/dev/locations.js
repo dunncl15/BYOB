@@ -1,12 +1,15 @@
 const data = require('../../../helpers/data_cleaner.js');
 
 exports.seed = function(knex, Promise) {
-  var localePromises = []
-  data.forEach(location => {
-    localePromises.push(createLocation(knex, location));
-  });
-
-  return Promise.all(localePromises);
+  return knex('parks').del()
+    .then(() => knex('locations').del())
+    .then(() => {
+      let localePromises = [];
+      data.forEach(location => {
+        localePromises.push(createLocation(knex, location));
+      });
+    })
+    return Promise.all(localePromises);
 }
 
 const createLocation = (knex, location) => {
