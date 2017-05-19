@@ -112,9 +112,9 @@ app.delete('/api/v1/locations/:id', checkAuth, (request, response) => {
   database('locations').where('id', id).del()
   .then(location => {
     if (!location.length) {
-      response.status(404).send({ error: 'Park not found.' })
+      response.status(404).send({ error: 'Location not found.' })
     } else {
-      response.sendStatus(204)
+      response.status(204).send('Location deleted.')
     }
   })
   .catch(error => response.status(500).send({ error: error }));
@@ -127,13 +127,14 @@ app.delete('/api/v1/parks/:id', checkAuth, (request, response) => {
     if (!park.length) {
       response.status(404).send({ error: 'Park not found.' })
     } else {
-      response.sendStatus(204)
+      response.status(204).send('Park deleted.')
     }
   })
   .catch(error => response.status(500).send({ error: error }));
 })
 
 app.use(notFound)
+
 
 app.listen(app.get('port'), () => {
   console.log(`Server running on port ${app.get('port')}.`);
