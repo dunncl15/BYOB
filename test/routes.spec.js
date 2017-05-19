@@ -323,6 +323,207 @@ describe('', () => {
         });
       });
 
+      it('should update a location when authorized', (done) => {
+        chai.request(server)
+        .get('/api/v1/locations/1')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].city.should.equal('Breckenridge')
+          chai.request(server)
+          .put('/api/v1/locations/1')
+          .set('authorization', process.env.TOKEN)
+          .send({ city: 'Crested Butte' })
+          .end((error, response) => {
+            response.should.have.status(201)
+            chai.request(server)
+            .get('/api/v1/locations/1')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].city.should.equal('Crested Butte')
+              done();
+            });
+          });
+        });
+      });
+
+      it('should deny an update without authorization', (done) => {
+        chai.request(server)
+        .get('/api/v1/locations/1')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].city.should.equal('Breckenridge')
+          chai.request(server)
+          .put('/api/v1/locations/1')
+          .send({ city: 'Crested Butte' })
+          .end((error, response) => {
+            response.should.have.status(403)
+            response.body.success.should.equal(false)
+            response.body.message.should.equal('You must be authorized to hit this endpoint')
+            chai.request(server)
+            .get('/api/v1/locations/1')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].city.should.equal('Breckenridge')
+              done();
+            });
+          });
+        });
+      });
+
+      it.skip('should throw an error if ID is changed', (done) => {
+        chai.request(server)
+        .put('/api/v1/locations/1')
+        .set('authorization', process.env.TOKEN)
+        .send(
+          { city: 'Crested Butte',
+            id: 5
+          }
+        )
+        .end((error, response) => {
+          response.should.have.status(403)
+          response.text.should.equal('ID cannot be changed.')
+          done();
+        });
+      });
+
+      it('should update a park when authorized', (done) => {
+        chai.request(server)
+        .get('/api/v1/parks/10')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].name.should.equal('Mt. Quandry')
+          response.body[0].activity_type.should.equal('hiking')
+          response.body[0].activity_description.should.equal('Summit a 14er.')
+          response.body[0].city_id.should.equal(1)
+          chai.request(server)
+          .put('/api/v1/parks/10')
+          .set('authorization', process.env.TOKEN)
+          .send(
+            { name: 'Peak 8',
+              activity_type: 'biking',
+              activity_description: 'Ride the mtn.',
+              city_id: 1
+           }
+          )
+          .end((error, response) => {
+            response.should.have.status(201)
+            chai.request(server)
+            .get('/api/v1/parks/10')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].name.should.equal('Peak 8')
+              response.body[0].activity_type.should.equal('biking')
+              response.body[0].activity_description.should.equal('Ride the mtn.')
+              response.body[0].city_id.should.equal(1)
+              done();
+            });
+          });
+        });
+      });
+
+      it('should deny an update to a park when unauthorized', (done) => {
+        chai.request(server)
+        .get('/api/v1/parks/10')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].name.should.equal('Mt. Quandry')
+          response.body[0].activity_type.should.equal('hiking')
+          response.body[0].activity_description.should.equal('Summit a 14er.')
+          response.body[0].city_id.should.equal(1)
+          chai.request(server)
+          .put('/api/v1/parks/10')
+          .send(
+            { name: 'Peak 8',
+              activity_type: 'biking',
+              activity_description: 'Ride the mtn.',
+              city_id: 1
+           }
+          )
+          .end((error, response) => {
+            response.should.have.status(403)
+            response.body.success.should.equal(false)
+            response.body.message.should.equal('You must be authorized to hit this endpoint')
+            chai.request(server)
+            .get('/api/v1/parks/10')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].name.should.equal('Mt. Quandry')
+              response.body[0].activity_type.should.equal('hiking')
+              response.body[0].activity_description.should.equal('Summit a 14er.')
+              response.body[0].city_id.should.equal(1)
+              done();
+            });
+          });
+        });
+      });
+
+      it('should partially update a park when authorized', (done) => {
+        chai.request(server)
+        .get('/api/v1/parks/10')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].name.should.equal('Mt. Quandry')
+          response.body[0].activity_type.should.equal('hiking')
+          response.body[0].activity_description.should.equal('Summit a 14er.')
+          response.body[0].city_id.should.equal(1)
+          chai.request(server)
+          .patch('/api/v1/parks/10')
+          .set('authorization', process.env.TOKEN)
+          .send(
+            { activity_type: 'rock climbing',
+              activity_description: 'scale some rocks'
+            }
+          )
+          .end((error, response) => {
+            response.should.have.status(201)
+            chai.request(server)
+            .get('/api/v1/parks/10')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].name.should.equal('Mt. Quandry')
+              response.body[0].activity_type.should.equal('rock climbing')
+              response.body[0].activity_description.should.equal('scale some rocks')
+              response.body[0].city_id.should.equal(1)
+              done();
+            });
+          });
+        });
+      });
+
+      it('should deny partial update to a park when unauthorized', (done) => {
+        chai.request(server)
+        .get('/api/v1/parks/10')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body[0].name.should.equal('Mt. Quandry')
+          response.body[0].activity_type.should.equal('hiking')
+          response.body[0].activity_description.should.equal('Summit a 14er.')
+          response.body[0].city_id.should.equal(1)
+          chai.request(server)
+          .patch('/api/v1/parks/10')
+          .send(
+            { activity_type: 'rock climbing',
+              activity_description: 'scale some rocks'
+            }
+          )
+          .end((error, response) => {
+            response.should.have.status(403)
+            response.body.success.should.equal(false)
+            response.body.message.should.equal('You must be authorized to hit this endpoint')
+            chai.request(server)
+            .get('/api/v1/parks/10')
+            .end((error, response) => {
+              response.should.have.status(200)
+              response.body[0].name.should.equal('Mt. Quandry')
+              response.body[0].activity_type.should.equal('hiking')
+              response.body[0].activity_description.should.equal('Summit a 14er.')
+              response.body[0].city_id.should.equal(1)
+              done();
+            });
+          });
+        });
+      });
+
     });
   });
 });
