@@ -46,11 +46,20 @@ app.get('/api/v1/locations/:id', (request, response) => {
 })
 
 app.get('/api/v1/parks', (request, response) => {
-  database('parks').select()
-  .then(parks => {
-    response.status(200).json(parks)
-  })
-  .catch(error => response.status(500).send({ error: error }));
+  let activity_type = request.param('activity_type')
+  if (activity_type) {
+    database('parks').where({ activity_type: activity_type }).select()
+    .then(parks => {
+      response.status(200).json(parks)
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  } else {
+    database('parks').select()
+    .then(parks => {
+      response.status(200).json(parks)
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  }
 })
 
 app.get('/api/v1/parks/:id', (request, response) => {
