@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test mocha",
     "start": "nodemon"
   },
   "repository": {
@@ -29,8 +29,12 @@
   },
   "description": "",
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
-    "eslint-plugin-import": "^2.2.0"
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.4.1"
   }
 }
