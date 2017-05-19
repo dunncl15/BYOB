@@ -3,7 +3,7 @@ const app = express();
 const jwt = require('jsonwebtoken');
 const config = require('dotenv').config().parsed;
 
-app.set('secretKey', config.CLIENT_SECRET);
+app.set('secretKey', process.env.CLIENT_SECRET || config.CLIENT_SECRET);
 let token = jwt.sign('token', app.get('secretKey'));
 
 const checkAuth = (request, response, next) => {
