@@ -4,7 +4,8 @@
   "main": "server.js",
   "scripts": {
     "test": "NODE_ENV=test mocha",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "./node_modules/.bin/eslint ./"
   },
   "repository": {
     "type": "git",
