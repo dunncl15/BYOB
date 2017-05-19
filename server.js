@@ -133,7 +133,75 @@ app.delete('/api/v1/parks/:id', checkAuth, (request, response) => {
   .catch(error => response.status(500).send({ error: error }));
 })
 
+app.put('/api/v1/locations/:id', checkAuth, (request, response) => {
+  const { id } = request.params;
 
+  if (request.body.hasOwnProperty('id')) {
+    response.status(403).send('ID cannot be changed.');
+  }
+
+  if (request.body.hasOwnProperty('city')) {
+    const newData = request.body;
+    database('locations').where('id', id).update(newData)
+    .returning('id')
+    .then(location => {
+      if (!location.length) {
+        response.status(404).send('Location does not exist.')
+      } else {
+        response.status(201).send({ id: location[0] })
+      }
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  }
+});
+
+app.put('/api/v1/parks/:id', checkAuth, (request, response) => {
+  const { id } = request.params
+  const parkProps = ['name', 'activity_type', 'activity_description', 'city_id'].every(prop => request.body.hasOwnProperty(prop));
+
+  if (request.body.hasOwnProperty('id')) {
+    response.status(403).send('ID cannot be changed.');
+  }
+
+  if (parkProps) {
+    let newParkData = request.body;
+    database('parks').where('id', id).update(newParkData)
+    .returning('id')
+    .then(park => {
+      if (!park.length) {
+        response.status(404).send('Park does not exist.')
+      } else {
+        response.status(201).send({ id: park[0] })
+      }
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  }
+});
+
+app.patch('/api/v1/parks/:id', checkAuth, (request, response) => {
+  const { id } = request.params;
+  const parkProps = ['name', 'activity_type', 'activity_description', 'city_id'].some(prop => request.body.hasOwnProperty(prop));
+
+  if (request.body.hasOwnProperty('id')) {
+    response.status(403).send('ID cannot be changed.');
+  }
+
+  if (parkProps) {
+    let newParkData = request.body;
+    database('parks').where('id', id).update(newParkData)
+    .returning(Object.keys(newParkData))
+    .then(park => {
+      if (!park.length) {
+        response.status(404).send('Park does not exist.')
+      } else {
+        response.status(201).send({ fields_updated: Object.keys(newParkData)})
+      }
+    })
+    .catch(error => response.status(500).send({ error: error }));
+  } else {
+    response.status(403).send('Invalid column name');
+  }
+});
 
 app.use(notFound)
 
