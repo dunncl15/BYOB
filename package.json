@@ -29,6 +29,7 @@
   },
   "description": "",
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "chai": "^3.5.0",
     "chai-http": "^3.0.0",
     "eslint": "^3.19.0",
