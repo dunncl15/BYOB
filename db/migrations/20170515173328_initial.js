@@ -1,5 +1,5 @@
 
-exports.up = function(knex, Promise) {
+exports.up = function (knex, Promise) {
   return Promise.all([
     knex.schema.createTable('locations', (table) => {
       table.increments('id').primary();
@@ -16,13 +16,13 @@ exports.up = function(knex, Promise) {
       table.foreign('city_id')
            .references('locations.id');
       table.timestamps(true, true);
-    })
+    }),
   ]);
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function (knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('parks'),
-    knex.schema.dropTable('locations')
+    knex.schema.dropTable('locations'),
   ]);
 };
