@@ -133,8 +133,9 @@ app.delete('/api/v1/parks/:id', checkAuth, (request, response) => {
   .catch(error => response.status(500).send({ error: error }));
 })
 
-app.use(notFound)
 
+
+app.use(notFound)
 
 app.listen(app.get('port'), () => {
   console.log(`Server running on port ${app.get('port')}.`);

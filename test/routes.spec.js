@@ -231,9 +231,9 @@ describe('', () => {
         )
         .end((error, response) => {
           response.should.have.status(403)
-          reponse.should.be.json
+          response.should.be.json
           response.body.should.be.a('object')
-          response.body.success.should.equal('false')
+          response.body.success.should.equal(false)
           response.body.message.should.equal('You must be authorized to hit this endpoint')
           done();
         });
@@ -294,6 +294,32 @@ describe('', () => {
               done();
             });
           });
+        });
+      });
+
+      it('should deny a DELETE request to locations without authorization', (done) => {
+        chai.request(server)
+        .delete('/api/v1/locations/3')
+        .end((error, response) => {
+          response.should.have.status(403)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.success.should.equal(false)
+          response.body.message.should.equal('You must be authorized to hit this endpoint')
+          done();
+        });
+      });
+
+      it('should deny a DELETE request to parks without authorization', (done) => {
+        chai.request(server)
+        .delete('/api/v1/parks/11')
+        .end((error, response) => {
+          response.should.have.status(403)
+          response.should.be.json
+          response.body.should.be.a('object')
+          response.body.success.should.equal(false)
+          response.body.message.should.equal('You must be authorized to hit this endpoint')
+          done();
         });
       });
 
